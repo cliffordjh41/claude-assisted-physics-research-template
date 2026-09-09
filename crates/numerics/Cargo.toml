@@ -1,0 +1,8 @@
+[package]
+name = "numerics"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Generic ODE integrators (velocity Verlet, RK4, adaptive Dormand-Prince 5(4)) and scalar root finding, with convergence-order tests."
+
+[dependencies]

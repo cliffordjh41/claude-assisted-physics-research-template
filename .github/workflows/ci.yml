@@ -1,0 +1,65 @@
+# CI: the automated backstop for "output must be seen" -- every push runs
+# the release-mode test suite with output captured, and builds the wasm
+# package and the lab bundle so the browser path cannot silently rot.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - name: Format check
+        run: cargo fmt --all --check
+      - name: Release tests with output
+        run: cargo test --release --workspace -- --nocapture
+
+  # The Lean project is checked on every push, and the axiom audit is the point
+  # of it rather than an extra. `axiom-audit` fails the build if any declaration
+  # under the project's root namespace depends on an axiom outside the allowlist,
+  # whose default is exactly `propext,Classical.choice,Quot.sound` -- the same
+  # three this directory requires and the same check `#print axioms` performs by
+  # hand. A `sorry` fails here too, so a placeholder proof cannot reach main.
+  #
+  # `lean-action` installs elan, reads the toolchain from `lean-toolchain`, and
+  # fetches prebuilt Mathlib with `lake exe cache get` rather than compiling it,
+  # which is what makes this affordable at all. Expect several minutes and a
+  # multi-gigabyte cache restore; without the prebuilt cache it would be hours.
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: lean/example
+          axiom-audit: true
+
+  lab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build wasm package
+        run: pnpm --filter lab wasm
+      - name: Type-check
+        run: pnpm --filter lab exec tsc --noEmit
+      - name: Production build
+        run: pnpm --filter lab build

@@ -1,0 +1,12 @@
+[package]
+name = "gravity"
+version = "0.0.1"
+edition.workspace = true
+license.workspace = true
+description = "Newtonian gravitation: the inverse-square force law and a Kepler-orbit integrator."
+
+[lib]
+path = "src/lib.rs"
+
+[dev-dependencies]
+uom = "0.38.0"

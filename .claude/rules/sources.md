@@ -1,0 +1,177 @@
+---
+paths:
+  - "library/**"
+  - "hypotheses/**"
+  - "papers/**"
+  - "crates/**/*.rs"
+  - "journals/**"
+---
+
+# Sources
+
+Two different jobs travel under the word "citation," and
+collapsing them is what turns original work into restated
+literature.
+
+## Provenance vs. justification
+
+**Provenance** records where an input came from. A constant, a
+measured value, a numerical method, a historical construction,
+a term borrowed from another field: cite it so a reader can go
+to the same place. Provenance citations are mandatory and carry
+no argumentative weight.
+
+**Justification** is why a claim should be believed. In this
+directory a claim is justified by a derivation whose chain is
+written out, or by output that was produced and read, and by
+nothing else. A claim is never justified by locating a
+publication that already says it.
+
+The consequence is deliberate: agreement with the literature is
+not evidence, and disagreement with the literature is not an
+error. Where a result of ours and a published result part ways,
+the parting is recorded at the point of divergence -- both
+numbers, both methods, both parameter sets -- and stands as a
+result. It is not reconciled away, and the published value is
+not adopted because it is published.
+
+The failure this prevents: when the literature is what licenses
+speech, the only writable claims are the already-written ones,
+and the work degrades into paraphrase.
+
+## Citation format
+
+Every citation is written to publication-reference quality and
+identically in every artifact that cites it (code docstrings
+included), never abbreviated: all authors with initials, full
+title, venue or publisher, volume, article number or page range,
+year, and a DOI (or arXiv ID with version). A historical primary
+source with no DOI is cited as the original work -- author, full
+title, year, book or section. A reference missing its title,
+DOI, or authors is not acceptable; an incomplete reference is
+worse than a missing one.
+
+## Locator
+
+A citation points at a work. A locator points at the thing being
+relied on, and is required whenever a specific result, value,
+equation, or method is taken: equation number, page, section, or
+figure. "Smith 2019" is not a locator; "Smith 2019, Eq. 14" is.
+
+Without a locator the claim cannot be checked by anyone,
+including a later session of this project, and the citation
+functions as decoration.
+
+## Read scope
+
+Every citation states how much of the source was actually read,
+as one of `full text`, `sections: <which>`, `abstract only`, or
+`second hand: via <source>`.
+
+`second hand` is the scope for a source known only through another
+paper's characterisation of it, and it is **weaker than
+`abstract only`**: an abstract is the authors' own compression,
+while a summary is someone else's, written for their argument
+rather than yours. It is never adequate for a claim about what
+the source says. The failure it names is specific and has
+happened here: a survey described a paper as proposing a measure,
+which was true, and omitted that the same paper considered and
+rejected the approach this directory takes -- the one sentence
+that mattered most, absent from both the abstract and the
+summary, present in the introduction.
+
+`abstract only` is permitted for provenance where the abstract
+carries the fact being used. It is not permitted for anything
+load-bearing: a value, an equation, a method, or a claim about
+what the source found. Those require the surrounding text read
+well enough to confirm the source says what it is cited for.
+
+Recording the scope honestly is the whole point. An
+`abstract only` marker on a load-bearing citation is a wall to
+close, not a defect to hide.
+
+## Searching, and recording the search
+
+A claim that no prior art exists is a claim, and carries the same
+burden as any other. It is supported by a search whose *queries
+are recorded*, not by its conclusion. A null result with no
+visible queries is indistinguishable from a search never run, and
+is treated as one -- including when the agent ran it itself, and
+most of all when the answer flatters the work.
+
+What a real search is: forward citation chasing from the anchors
+a result would have to cite, the reference lists of any survey
+that would name the result if it existed, and full-text search
+where available. Three keyword queries are not that.
+
+What is recorded: the queries verbatim, the tool used, what was
+found, and what the search does *not* cover. What may then be
+written is "to our knowledge", with the search documented. Never
+"this is new".
+
+## Verification
+
+A reference is checked to exist before it is filed -- resolve
+the DOI, or retrieve the arXiv abstract page at the cited
+version. Agent recollection of a reference is not a reference.
+A citation assembled from memory and never resolved is treated
+as fabricated until resolved.
+
+## Library
+
+**`library/` is checked before any search.** Once it holds
+anything, `prior-art/library-index.md` is the greppable listing,
+regenerated by `python3 tools/index_library.py`. Resolving a
+citation against a web API for a source already on disk is the
+failure that index exists to prevent, and it is easy to commit
+once the library is large enough that listing directories does
+not reveal what is in it.
+
+The library is **portable**: it moves between projects whole and
+carries its own filing contract at `library/CLAUDE.md`, which
+governs where a source goes. Read it before filing. In outline,
+a source files under its discipline as
+
+    library/<domain>/<author>/<publication>/notes.md
+    library/<domain>/<author>/<publication>/<publication>.pdf
+
+or, where the source file is not held, as a single note
+
+    library/<domain>/<short-name>.md
+
+One file per source, whichever shape:
+
+- Full citation.
+- One line on what it is used for.
+- Read scope and date of first read.
+- Load-bearing equations or passages, verbatim, with locators.
+
+Not in a library file: re-narration of the source, material from
+other sources, the agent's interpretation. Summarizing a source
+at length is copying text that already exists elsewhere; the
+library file exists to make the load-bearing passage retrievable
+and to fix the citation, not to restate the work.
+
+## What belongs in `prior-art/` instead
+
+The library is portable, so nothing that would be stale or
+meaningless in another project may live in it. Three kinds of
+file are therefore **not** library files even though they are
+about sources, and they go in `prior-art/`:
+
+- **Search records.** Queries verbatim, the tool used, what was
+  found, what the search does not cover.
+- **Syntheses across several sources** that position this
+  project's results against published ones -- anything with a
+  "where our result sits" or "how this differs" section.
+- **Generated indexes** of the library.
+
+The test is the same one `library/CLAUDE.md` states: if the file
+would be wrong, stale, or meaningless after the library is copied
+into a different project, it is not a library file.
+
+## Cross-discipline
+
+When invoking a named object from outside the primary
+discipline, file that discipline's source alongside the
+derivation, with locator and read scope.

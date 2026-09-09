@@ -1,0 +1,12 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/lab-core",
+    "crates/gravity",
+    "crates/numerics",
+    "crates/pendulum",
+]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"

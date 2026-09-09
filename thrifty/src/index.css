@@ -1,0 +1,396 @@
+/* thrifty-ui — library CSS surface. Consumed by workspace apps
+ * that import this file alongside their own `@import "tailwindcss"`
+ * entry; Tailwind v4 processes the @theme blocks within the
+ * consumer's CSS pipeline. */
+
+/* Overlay + content transitions for Dialog / Sheet. */
+
+@keyframes overlay-show {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlay-hide {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+/* Tailwind v4 emits the `translate` CSS property (not `transform`)
+ * for centering utilities like `-translate-x-1/2`, so the keyframe's
+ * `transform` must be scale-only — adding `translate(-50%, -50%)`
+ * here would double-shift the element during animation and snap it
+ * back when the animation ends. */
+@keyframes content-show {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes content-hide {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slide-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slide-out-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+@keyframes slide-in-top {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+@keyframes slide-out-top {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+@keyframes slide-in-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes slide-out-bottom {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+@property --holo-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: true;
+}
+
+@keyframes holo-spin {
+  to { --holo-angle: 360deg; }
+}
+
+/* Generic character animations — translate-Y idle hover, eye-blink
+ * sequences, talking-mouth scale cycle, hue-rotate filter cycle. Apply
+ * via the corresponding animate-* utilities (float / blink / blink-fast
+ * / mouth-talk / hue-rotate). */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes blink {
+  0%, 88%, 100% { transform: scaleY(1); }
+  94% { transform: scaleY(0.05); }
+}
+
+@keyframes blink-fast {
+  0%, 75%, 100% { transform: scaleY(1); }
+  88% { transform: scaleY(0.05); }
+}
+
+@keyframes hue-rotate {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
+}
+
+@keyframes mouth-talk {
+  0%, 100% { transform: scaleY(0.2); }
+  15%       { transform: scaleY(1); }
+  30%       { transform: scaleY(0.4); }
+  45%       { transform: scaleY(0.9); }
+  60%       { transform: scaleY(0.2); }
+  75%       { transform: scaleY(0.7); }
+}
+
+/* Holo treatment — conic gradient through the visualizer-token rainbow,
+ * low-opacity, rotation hook on --holo-angle. Apply to any absolute-inset
+ * pointer-events-none overlay div on a surface that opts in via the
+ * corresponding theme.styling.*Holo flag (columnHolo, backgroundHolo, ...). */
+.bg-holo {
+    background: conic-gradient(
+        from var(--holo-angle),
+        var(--visualizer-1) 0%,
+        var(--visualizer-2) 8.33%,
+        var(--visualizer-3) 16.67%,
+        var(--visualizer-4) 25%,
+        var(--visualizer-5) 33.33%,
+        var(--visualizer-6) 41.67%,
+        var(--visualizer-7) 50%,
+        var(--visualizer-8) 58.33%,
+        var(--visualizer-9) 66.67%,
+        var(--visualizer-10) 75%,
+        var(--visualizer-11) 83.33%,
+        var(--visualizer-12) 91.67%,
+        var(--visualizer-1) 100%
+    );
+    transition: --holo-angle 0.2s ease-out;
+    opacity: 0.08;
+}
+
+@property --scroll-duration {
+  syntax: '<time>';
+  initial-value: 30s;
+  inherits: false;
+}
+
+@keyframes scroll-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-33.333%); }
+}
+
+@keyframes scroll-down {
+  from { transform: translateY(-33.333%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes scroll-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.333%); }
+}
+
+@keyframes scroll-right {
+  from { transform: translateX(-33.333%); }
+  to { transform: translateX(0); }
+}
+
+/* --font-sans lives in a non-inline @theme block so the .font-sans
+ * utility resolves to `font-family: var(--font-sans)` (rather than
+ * inlining the literal value). useThemeRoot writes --font-sans on
+ * :root from the picker, and the cascade reaches every .font-sans
+ * site at runtime. */
+@theme {
+    --font-sans: Inter, system-ui, sans-serif;
+    /* Snappier hover/active feedback. Tailwind's transition-* utilities
+     * default to 150ms, which reads as a beat late on button highlights.
+     * Lower to taste (75ms or 0ms for instant). */
+    --default-transition-duration: 110ms;
+}
+
+@theme inline {
+    --animate-scroll-up: scroll-up var(--scroll-duration, 30s) linear infinite;
+    --animate-scroll-down: scroll-down var(--scroll-duration, 30s) linear infinite;
+    --animate-scroll-left: scroll-left var(--scroll-duration, 30s) linear infinite;
+    --animate-scroll-right: scroll-right var(--scroll-duration, 30s) linear infinite;
+    --animate-float: float 3s ease-in-out infinite;
+    --animate-blink: blink 4s ease-in-out infinite;
+    --animate-blink-fast: blink-fast 2s ease-in-out infinite;
+    --animate-hue-rotate: hue-rotate 6s linear infinite;
+    --animate-mouth-talk: mouth-talk 0.6s ease-in-out infinite;
+    --animate-holo-spin: holo-spin var(--holo-speed, 8s) linear infinite;
+    --animate-overlay-show: overlay-show 150ms ease-out;
+    --animate-overlay-hide: overlay-hide 150ms ease-in;
+    --animate-content-show: content-show 150ms ease-out;
+    --animate-content-hide: content-hide 150ms ease-in;
+    --animate-slide-in-right: slide-in-right 200ms ease-out;
+    --animate-slide-out-right: slide-out-right 200ms ease-in;
+    --animate-slide-in-left: slide-in-left 200ms ease-out;
+    --animate-slide-out-left: slide-out-left 200ms ease-in;
+    --animate-slide-in-top: slide-in-top 200ms ease-out;
+    --animate-slide-out-top: slide-out-top 200ms ease-in;
+    --animate-slide-in-bottom: slide-in-bottom 200ms ease-out;
+    --animate-slide-out-bottom: slide-out-bottom 200ms ease-in;
+    --color-action-hover: var(--action-hover);
+    --color-action-active: var(--action-active);
+    --color-foreground-hover: var(--foreground-hover);
+    --color-mute-hover: var(--mute-hover);
+    --color-line-strong: var(--line-strong);
+    --radius-sm: max(0rem, calc(var(--radius) - 0.25rem));
+    --radius-md: max(0rem, calc(var(--radius) - 0.125rem));
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 0.25rem);
+    /* Theme-driven shadow strength: every shadow-* utility scales from the
+     * runtime --theme-shadow-strength (set by ThemeScope; default 1 = stock
+     * Tailwind). 0 removes shadows; higher = more pronounced. */
+    --shadow-2xs: 0 1px rgb(0 0 0 / calc(0.05 * var(--theme-shadow-strength, 1)));
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / calc(0.05 * var(--theme-shadow-strength, 1)));
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1))), 0 1px 2px -1px rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1)));
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1))), 0 2px 4px -2px rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1)));
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1))), 0 4px 6px -4px rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1)));
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1))), 0 8px 10px -6px rgb(0 0 0 / calc(0.1 * var(--theme-shadow-strength, 1)));
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / calc(0.25 * var(--theme-shadow-strength, 1)));
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-action: var(--action);
+    --color-action-fg: var(--action-fg);
+    --color-subdued: var(--subdued);
+    --color-subdued-fg: var(--subdued-fg);
+    --color-highlight: var(--highlight);
+    --color-highlight-fg: var(--highlight-fg);
+    --color-mute: var(--mute);
+    --color-mute-fg: var(--mute-fg);
+    --color-line: var(--line);
+    --color-alert: var(--alert);
+    --color-alert-fg: var(--alert-fg);
+    --color-surface: var(--surface);
+    --color-overlay: var(--overlay);
+    --color-overlay-fg: var(--overlay-fg);
+    --color-scrim: var(--scrim);
+    --color-field: var(--field);
+    --color-focus: var(--focus);
+    --color-visualizer-1: var(--visualizer-1);
+    --color-visualizer-2: var(--visualizer-2);
+    --color-visualizer-3: var(--visualizer-3);
+    --color-visualizer-4: var(--visualizer-4);
+    --color-visualizer-5: var(--visualizer-5);
+    --color-visualizer-6: var(--visualizer-6);
+    --color-visualizer-7: var(--visualizer-7);
+    --color-visualizer-8: var(--visualizer-8);
+    --color-visualizer-9: var(--visualizer-9);
+    --color-visualizer-10: var(--visualizer-10);
+    --color-visualizer-11: var(--visualizer-11);
+    --color-visualizer-12: var(--visualizer-12);
+    --color-column: var(--column);
+    --color-column-foreground: var(--column-foreground);
+    --color-column-highlight: var(--column-highlight);
+    --color-column-line: var(--column-line);
+}
+
+:root {
+    /* Enable `height: auto` / `width: auto` transitions globally
+     * (Accordion + Collapsible expansion no longer need JS to measure
+     * the natural height — CSS will interpolate to/from the keyword
+     * value directly). */
+    interpolate-size: allow-keywords;
+
+    --radius: 0.625rem;
+    --background: oklch(0.714 0.143 254.62);
+    --foreground: oklch(0.147 0.004 49.25);
+    --action: oklch(0.216 0.006 56.04);
+    --action-fg: oklch(0.985 0.001 106.42);
+    --subdued: oklch(0.97 0.001 106.42);
+    --subdued-fg: oklch(0.216 0.006 56.04);
+    --highlight: oklch(0.97 0.001 106.42);
+    --highlight-fg: oklch(0.216 0.006 56.04);
+    --mute: oklch(0.97 0.001 106.42);
+    --mute-fg: oklch(0.553 0.012 58.07);
+    --line: oklch(0.923 0.003 48.72);
+    --alert: oklch(0.637 0.208 25.33);
+    --alert-fg: oklch(0.985 0.001 106.42);
+    --surface: oklch(0.985 0.001 106.42);
+    --overlay: oklch(0.985 0.001 106.42);
+    --overlay-fg: oklch(0.147 0.004 49.25);
+    /* Scrim = dimming layer behind modals. Opaque base; sites apply
+     * Tailwind alpha (e.g. bg-scrim/50). */
+    --scrim: oklch(0 0 0);
+    --field: oklch(0.923 0.003 48.72);
+    --focus: oklch(0.147 0.004 49.25);
+    --visualizer-1: oklch(0.637 0.208 25.33);
+    --visualizer-2: oklch(0.705 0.187 47.6);
+    --visualizer-3: oklch(0.769 0.165 70.08);
+    --visualizer-4: oklch(0.795 0.162 86.05);
+    --visualizer-5: oklch(0.768 0.204 130.85);
+    --visualizer-6: oklch(0.723 0.192 149.58);
+    --visualizer-7: oklch(0.696 0.149 162.48);
+    --visualizer-8: oklch(0.715 0.126 215.22);
+    --visualizer-9: oklch(0.623 0.188 259.81);
+    --visualizer-10: oklch(0.585 0.204 277.12);
+    --visualizer-11: oklch(0.606 0.219 292.72);
+    --visualizer-12: oklch(0.627 0.233 303.9);
+    --column: oklch(0.97 0.001 106.42);
+    --column-foreground: oklch(0.147 0.004 49.25);
+    --column-highlight: oklch(0.97 0.001 106.42);
+    --column-line: oklch(0.923 0.003 48.72);
+    /* Typography defaults. Consumer CSS overrides via :root. Without
+     * these, panels using font-(--theme-font-weight) etc. would
+     * resolve to nothing when a consumer's exported theme omits the
+     * styling tokens (studio only exports them when explicitly set
+     * in the picker). */
+    --theme-font-weight: 400;
+    --theme-letter-spacing: 0em;
+    --theme-line-height: 1.5;
+
+    /* Derived hover / active / strong-line shades via color-mix(). One
+     * source of truth: change --action / --foreground / etc. and the
+     * derived state colors update with them. Tailwind utilities
+     * `bg-action-hover`, `text-foreground-hover`, `bg-mute-hover`,
+     * `border-line-strong` resolve to these. */
+    --action-hover: color-mix(in oklch, var(--action) 90%, white);
+    --action-active: color-mix(in oklch, var(--action) 80%, black);
+    --foreground-hover: color-mix(in oklch, var(--foreground) 88%, var(--background));
+    --mute-hover: color-mix(in oklch, var(--mute) 70%, var(--background));
+    --line-strong: color-mix(in oklch, var(--line) 60%, var(--foreground));
+}
+
+@layer base {
+    * {
+        @apply border-line outline-focus/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+        /* Prevent accidental pull-to-refresh / scroll-chaining on
+         * mobile when nested scroll containers reach their limits. */
+        overscroll-behavior-y: contain;
+    }
+
+    /* Mobile-touch hygiene: kill the iOS tap-flash blue overlay on
+     * interactive elements, and eliminate the 300ms double-tap-zoom
+     * delay so taps register immediately. */
+    button,
+    a,
+    [role="button"],
+    input,
+    textarea,
+    select {
+        -webkit-tap-highlight-color: transparent;
+    }
+    button,
+    a,
+    [role="button"] {
+        touch-action: manipulation;
+    }
+
+    /* Global scrollbar — thin, subtle, transparent track */
+    *::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    *::-webkit-scrollbar-thumb {
+        background: oklch(0.5 0 0 / 0.2);
+        border-radius: 9999px;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+        background: oklch(0.5 0 0 / 0.35);
+    }
+    /* Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: oklch(0.5 0 0 / 0.2) transparent;
+    }
+}
+
+/* Respect prefers-reduced-motion across every animation /
+ * transition site. Holo rotation, depth-panel cursor parallax,
+ * sheet / dialog slide / fade keyframes, accordion + collapsible
+ * expansion — all should snap to their final state instead of
+ * animating when the user has asked for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* iOS Safari/Chrome auto-zoom triggers on focus when an input's
+ * font-size is below 16px, causing the page to jolt in and out on
+ * every focus/blur. Force a 16px floor on every typable input across
+ * touch + narrow-viewport contexts. Lives OUTSIDE @layer base + uses
+ * !important because Tailwind utilities (text-[11px], text-sm, etc.)
+ * sit in @layer utilities which beats base in the cascade — without
+ * unlayered+!important, every text-* utility on an input overrides
+ * the floor and zoom returns. Threshold matches useIsMobile (1024px)
+ * so phones in any orientation are covered. */
+@media (max-width: 1024px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]),
+    textarea,
+    select {
+        font-size: 16px !important;
+    }
+}

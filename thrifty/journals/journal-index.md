@@ -1,0 +1,3 @@
+# journal index
+
+- `journal-01.md` — 2026-05-23 onwards. Current volume.

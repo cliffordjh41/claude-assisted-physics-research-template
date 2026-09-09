@@ -1,0 +1,18 @@
+target/
+node_modules/
+.DS_Store
+pkg/
+dist/
+.vite/
+*.tsbuildinfo
+*.log
+.claude/settings.local.json
+
+# python bytecode from hook testing
+__pycache__/
+*.pyc
+
+# runs/ is deliberately NOT ignored. The run log is the evidence behind
+# every `pass` in a journal entry; a result whose run is not in the log is
+# `open`. Ignoring it would make past results unverifiable after a fresh
+# clone or a move between machines.

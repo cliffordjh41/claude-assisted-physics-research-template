@@ -1,0 +1,6 @@
+packages:
+  - thrifty
+  - apps/*
+allowBuilds:
+  esbuild: true
+  wasm-pack: true
