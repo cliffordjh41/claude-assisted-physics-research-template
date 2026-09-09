@@ -1,4 +1,4 @@
-# Physics research template (v3)
+# Claude-assisted physics research template
 
 A discipline scaffold for doing theoretical-physics research with an AI
 coding assistant (Claude Code). It pairs a small always-on rule set with a
@@ -182,8 +182,8 @@ the directory for your own work.
 
 ## No desktop shell
 
-This template ships the browser path only. The v3 template carried a Tauri
-v2 desktop shell at `apps/lab/src-tauri/`; the lab was rebuilt on the
+This template ships the browser path only. An earlier version carried a
+Tauri v2 desktop shell at `apps/lab/src-tauri/`; the lab was rebuilt on the
 `thrifty-ui` kit, which has no Tauri dependency, and the shell was not
 carried over. Adding one back is a per-project decision, not a default.
 
